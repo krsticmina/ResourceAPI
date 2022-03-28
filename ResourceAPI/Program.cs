@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResourceAPI.DbContexts;
+using ResourceAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IRepository,Repository>();
 
 builder.Services.AddDbContext<ResourceDbContext>(options => {
     options.UseSqlServer(@"Data Source=EN510840\SQLEXPRESS;Initial Catalog=ResourceDb;Integrated Security=True");
