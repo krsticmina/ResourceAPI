@@ -16,7 +16,7 @@ namespace ResourceAPI.Models
         public string PhoneNumber { get; set; } = string.Empty;
         public int ManagerId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "You should provide a salary value.")]
         public int Salary { get; set; }
     }
 }
