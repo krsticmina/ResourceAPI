@@ -50,6 +50,17 @@ namespace ResourceAPI.Controllers
         public async Task<ActionResult> AddEmployee([FromBody] EmployeeForInsertionDto employee)
         {
             if (!ModelState.IsValid) return BadRequest();
+
+            if (employee.ManagerId!=0)
+            {
+                var manager = await repository.GetEmployeeByIdAsync(employee.ManagerId);
+
+                if (manager == null)
+                {
+                    return BadRequest($"Manager with id {employee.ManagerId} does not exist.");
+                }
+            }
+
             var employeeToAdd = mapper.Map<Employee>(employee);
 
             await repository.AddEmployeeAsync(employeeToAdd);
@@ -66,7 +77,7 @@ namespace ResourceAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateEmployee(int employeeId, [FromBody] JsonPatchDocument<EmployeeForInsertionDto> patchDocument)
+        public async Task<IActionResult> PartiallyUpdateEmployee(int employeeId, [FromBody] JsonPatchDocument<EmployeeForInsertionDto> patchDocument)
         {
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
 
@@ -100,7 +111,10 @@ namespace ResourceAPI.Controllers
         }
 
         [HttpPut("{employeeId}")]
-        public async Task<IActionResult> updateEmployee(int employeeId, EmployeeForInsertionDto employeeToUpdate)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateEmployee(int employeeId, EmployeeForInsertionDto employeeToUpdate)
         {
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
             if (employee == null)
