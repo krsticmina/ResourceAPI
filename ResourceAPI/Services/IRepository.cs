@@ -4,7 +4,12 @@ namespace ResourceAPI.Services
 {
     public interface IRepository
     {
-        Task<Employee?> getEmployee(int id);
+        Task<Employee?> GetEmployeeByIdAsync(int id);
+        Task<IEnumerable<Employee>> GetAllEmployeesAsync();
+        Task AddEmployeeAsync(Employee employee);
+        void UpdateEmployee(Employee employee);
+        Task<bool> SaveChangesAsync();
+
 
     }
 }
