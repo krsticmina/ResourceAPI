@@ -13,10 +13,8 @@ namespace ResourceAPI.Entities
         [MaxLength(100)]
         public string Name { get; set; }
         [Required]
-        [EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required]
-        [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
         public int? ManagerId { get; set; }
         [Required]
