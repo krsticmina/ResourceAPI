@@ -16,6 +16,7 @@ namespace ResourceAPI.Models
         public string PhoneNumber { get; set; } = string.Empty;
         [Required]
         public int Salary { get; set; }
+        public int ManagerId { get; set; }
 
     }
 }

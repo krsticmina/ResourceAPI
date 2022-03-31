@@ -18,7 +18,7 @@ namespace ResourceAPI.Entities
         [Required]
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
-        public int ManagerId { get; set; }
+        public int? ManagerId { get; set; }
         [Required]
         public int Salary { get; set; }
         public Employee(string name)

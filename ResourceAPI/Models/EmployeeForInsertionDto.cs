@@ -9,14 +9,15 @@ namespace ResourceAPI.Models
 
         [MaxLength(100)]
         [Required(ErrorMessage = "You should provide an email value.")]
+        [RegularExpression(@"(.*)@(.*)\.(.*)", ErrorMessage = "Input email not valid.")]
         public string Email { get; set; } = string.Empty;
-
+   
         [Required(ErrorMessage = "You should provide a phone number value.")]
         [MaxLength(100)]
         public string PhoneNumber { get; set; } = string.Empty;
         public int ManagerId { get; set; }
 
         [Required(ErrorMessage = "You should provide a salary value.")]
-        public int Salary { get; set; }
+        public int? Salary { get; set; }
     }
 }
