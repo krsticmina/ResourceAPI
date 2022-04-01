@@ -22,6 +22,12 @@ namespace ResourceAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Action for finding an employee using id.
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <returns></returns>
+        
         [HttpGet("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,6 +41,12 @@ namespace ResourceAPI.Controllers
             return Ok(mapper.Map<EmployeeDto>(employee));
         }
 
+
+        /// <summary>
+        /// Action for retrieving all employees from database
+        /// </summary>
+        /// <returns></returns>
+        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployees()
@@ -46,6 +58,12 @@ namespace ResourceAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Action for adding employee to database
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+       
         [HttpPost]
         public async Task<ActionResult> AddEmployee([FromBody] EmployeeForInsertionDto employee)
         {
@@ -73,6 +91,13 @@ namespace ResourceAPI.Controllers
 
         }
 
+        /// <summary>
+        ///  Action for partially updating employee
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="patchDocument"></param>
+        /// <returns></returns>
+        
         [HttpPatch("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -110,6 +135,13 @@ namespace ResourceAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Action for updating employee
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="employeeToUpdate"></param>
+        /// <returns></returns>
+        
         [HttpPut("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
