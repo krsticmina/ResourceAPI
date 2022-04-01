@@ -6,8 +6,7 @@ namespace ResourceAPI.Profiles
     {
         public EmployeeProfile() 
         {
-            CreateMap<Entities.Employee, Models.EmployeeDto>();
-            CreateMap<Models.EmployeeDto, Entities.Employee>();
+            CreateMap<Entities.Employee, Models.EmployeeDto>().ReverseMap();
             CreateMap<Models.EmployeeForInsertionDto, Entities.Employee>().ReverseMap();
 
         }
