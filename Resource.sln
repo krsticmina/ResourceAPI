@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceDAL", "StaffSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceBLL", "StaffServiceBIL\StaffServiceBLL.csproj", "{08DD3889-824A-45B9-B70A-D1B8207937B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffServiceCore", "StaffServiceCore\StaffServiceCore.csproj", "{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceCore", "StaffServiceCore\StaffServiceCore.csproj", "{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
