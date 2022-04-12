@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ResourceAPI.DbContexts;
-using ResourceAPI.Services;
+using StaffServiceAPI.DbContexts;
+using StaffServiceDAL.Services;
+using StaffServiceBLL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,18 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<ResourceDbContext>(options => {
-    options.UseSqlServer(@"Data Source=EN510840\SQLEXPRESS;Initial Catalog=ResourceDb;Integrated Security=True");
+builder.Services.AddDbContext<StaffDatabaseContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("StaffDatabaseConnectionString"));
 });
+
+// This is for calling CreatedAtAction in my controller because it trims the 'Async' part from action names
+builder.Services.AddControllersWithViews(options => { options.SuppressAsyncSuffixInActionNames = false; });
 
 var app = builder.Build();
 

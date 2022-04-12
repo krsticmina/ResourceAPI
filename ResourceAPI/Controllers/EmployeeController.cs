@@ -1,29 +1,27 @@
-﻿using AutoMapper;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using ResourceAPI.Entities;
-using ResourceAPI.Models;
-using ResourceAPI.Services;
+using StaffServiceBLL;
+using StaffServiceCore.Models;
 
-namespace ResourceAPI.Controllers
+namespace StaffServiceAPI.Controllers
 {
     [Route("api/employees")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IRepository repository;
-        private readonly IMapper mapper;
+        private readonly IEmployeeService service;
 
-        public EmployeeController(IRepository repository, IMapper mapper)
+        public EmployeeController(IEmployeeService service)
         {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this.service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
 
         /// <summary>
-        /// Action for finding an employee using id.
+        /// Action for finding an employee using Id.
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
@@ -31,109 +29,55 @@ namespace ResourceAPI.Controllers
         [HttpGet("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEmployeeById(int employeeId)
+        public async Task<IActionResult> GetEmployeeByIdAsync(int employeeId)
         {
-            var employee = await repository.GetEmployeeByIdAsync(employeeId);
+            var employee = await service.GetEmployeeByIdAsync(employeeId);
+
             if (employee == null)
             {
-                return NotFound();
+                return NotFound($"Employee with Id {employeeId} not found.");
             }
-            return Ok(mapper.Map<EmployeeDto>(employee));
+            return Ok(employee);
         }
 
 
         /// <summary>
-        /// Action for retrieving all employees from database
+        /// Action for retrieving all employees from the database
         /// </summary>
         /// <returns></returns>
-        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployees()
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync()
         {
+            var employees = await service.GetAllEmployeesAsync();
 
-            var employees = await repository.GetAllEmployeesAsync();
-
-            return Ok(mapper.Map<IEnumerable<EmployeeDto>>(employees));
+            return Ok(employees);
 
         }
 
+
         /// <summary>
-        /// Action for adding employee to database
+        /// Action for adding an employee to the database
         /// </summary>
         /// <param name="employee"></param>
         /// <returns></returns>
-       
+
         [HttpPost]
-        public async Task<ActionResult> AddEmployee([FromBody] EmployeeForInsertionDto employee)
-        {
-            if (!ModelState.IsValid) return BadRequest();
-
-            if (employee.ManagerId!=0)
-            {
-                var manager = await repository.GetEmployeeByIdAsync(employee.ManagerId);
-
-                if (manager == null)
-                {
-                    return BadRequest($"Manager with id {employee.ManagerId} does not exist.");
-                }
-            }
-
-            var employeeToAdd = mapper.Map<Employee>(employee);
-
-            await repository.AddEmployeeAsync(employeeToAdd);
-
-            await repository.SaveChangesAsync();
-
-            var employeeToReturn = mapper.Map<EmployeeDto>(employeeToAdd);
-
-            return CreatedAtAction(nameof(GetEmployeeById), new { employeeId = employeeToReturn.Id }, employeeToReturn);
-
-        }
-
-        /// <summary>
-        ///  Action for partially updating employee
-        /// </summary>
-        /// <param name="employeeId"></param>
-        /// <param name="patchDocument"></param>
-        /// <returns></returns>
-        
-        [HttpPatch("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PartiallyUpdateEmployee(int employeeId, [FromBody] JsonPatchDocument<EmployeeForInsertionDto> patchDocument)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
         {
-            var employee = await repository.GetEmployeeByIdAsync(employeeId);
+            var result = await service.AddEmployeeAsync(employee);
 
-            if (employee == null)
+            if (result == null)
             {
-                return NotFound();
+                return BadRequest($"Manager with Id {employee.ManagerId} doesn't exist or does not have managerial position.");
             }
 
-            var employeeToUpdate = mapper.Map<EmployeeForInsertionDto>(employee);
-
-            patchDocument.ApplyTo(employeeToUpdate, ModelState);
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!TryValidateModel(employeeToUpdate))
-            {
-                return BadRequest(ModelState);
-            }
-
-            mapper.Map(employeeToUpdate, employee);
-
-            repository.UpdateEmployee(employee);
-
-            await repository.SaveChangesAsync();
-
-            return NoContent();
+            return CreatedAtAction(nameof(GetEmployeeByIdAsync), new { employeeId = result.Id }, result);
 
         }
+
 
         /// <summary>
         /// Action for updating employee
@@ -141,25 +85,57 @@ namespace ResourceAPI.Controllers
         /// <param name="employeeId"></param>
         /// <param name="employeeToUpdate"></param>
         /// <returns></returns>
-        
+
         [HttpPut("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateEmployee(int employeeId, EmployeeForInsertionDto employeeToUpdate)
+        public async Task<IActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
         {
-            var employee = await repository.GetEmployeeByIdAsync(employeeId);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-            mapper.Map(employeeToUpdate, employee);
+            var result = await service.UpdateEmployeeAsync(employeeId, employeeToUpdate);
 
-            repository.UpdateEmployee(employee);
-
-            await repository.SaveChangesAsync();
+            if (result == null) return NotFound($"Employee with Id {employeeId} not found.");
 
             return NoContent();
+        }
+
+
+
+        /// <summary>
+        ///  Action for partially updating employee
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="patchDocument"></param>
+        /// <returns></returns>
+
+        [HttpPatch("{employeeId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> PartiallyUpdateEmployeeAsync(int employeeId, [FromBody] JsonPatchDocument patchDocument)
+        { 
+            var employeeToUpdate = await service.GetEmployeeForUpdate(employeeId);
+
+            if (employeeToUpdate == null) return NotFound($"Employee with Id {employeeId} not found.");
+
+            patchDocument.ApplyTo(employeeToUpdate);
+
+            if (!ModelState.IsValid)
+            {
+                    return BadRequest();
+            }
+
+            if (!TryValidateModel(employeeToUpdate))
+            {
+                return BadRequest();
+            }
+
+            var result = await service.UpdateEmployeeAsync(employeeId,employeeToUpdate);
+
+            if (result == null) return BadRequest();
+
+            return NoContent();
+
         }
 
 
