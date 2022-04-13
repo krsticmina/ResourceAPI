@@ -4,11 +4,11 @@ using StaffServiceDAL.Entities;
 
 namespace StaffServiceDAL.Services
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class AdminStaffRepository : IAdminStaffRepository
     {
         private readonly StaffDatabaseContext context;
 
-        public EmployeeRepository(StaffDatabaseContext context)
+        public AdminStaffRepository(StaffDatabaseContext context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }

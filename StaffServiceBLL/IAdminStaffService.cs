@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StaffServiceBLL
 {
-    public interface IEmployeeService
+    public interface IAdminStaffService
     {
         Task<EmployeeForUpdateDto?> GetEmployeeForUpdate(int employeeId);
         Task<EmployeeDto?> GetEmployeeByIdAsync(int employeeId);

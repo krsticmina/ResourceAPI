@@ -1,86 +1,80 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using StaffServiceBLL;
 using StaffServiceCore.Models;
 
 namespace StaffServiceAPI.Controllers
 {
-    [Route("api/employees")]
+    [Route("api/manager/{managerId}/employees")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class ManagerStaffController : ControllerBase
     {
-        private readonly IEmployeeService service;
+        private readonly IManagerStaffService _service;
 
-        public EmployeeController(IEmployeeService service)
+        public ManagerStaffController(IManagerStaffService service)
         {
-            this.service = service ?? throw new ArgumentNullException(nameof(service));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-
         /// <summary>
-        /// Action for finding an employee using Id.
+        /// Action for finding an employee using id.
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
-        
+
         [HttpGet("{employeeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEmployeeByIdAsync(int employeeId)
+        public async Task<IActionResult> GetEmployeeByIdAsync(int managerId, int employeeId)
         {
-            var employee = await service.GetEmployeeByIdAsync(employeeId);
+            var employee = await _service.GetEmployeeByIdAsync(managerId, employeeId);
 
             if (employee == null)
             {
-                return NotFound($"Employee with Id {employeeId} not found.");
+                return NotFound($"Employee with Id {employeeId} not found or could not be accessed.");
             }
             return Ok(employee);
         }
 
 
         /// <summary>
-        /// Action for retrieving all employees from the database
+        /// Action for retrieving all employees from database 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync()
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync(int managerId)
         {
-            var employees = await service.GetAllEmployeesAsync();
+            var employees = await _service.GetAllEmployeesAsync(managerId);
 
             return Ok(employees);
 
         }
 
-
         /// <summary>
         /// Action for adding an employee to the database
         /// </summary>
-        /// <param name="employee"></param>
         /// <returns></returns>
-
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
         {
-            var result = await service.AddEmployeeAsync(employee);
+            var res = await _service.AddEmployeeAsync(employee);
 
-            if (result == null)
+            if (res == null)
             {
                 return BadRequest($"Manager with Id {employee.ManagerId} doesn't exist or does not have managerial position.");
             }
 
-            return CreatedAtAction(nameof(GetEmployeeByIdAsync), new { employeeId = result.Id }, result);
+            return CreatedAtAction(nameof(GetEmployeeByIdAsync), new { managerId = res.managerId, employeeId = res.Id }, res);
 
         }
 
 
         /// <summary>
-        /// Action for updating employee
+        /// Action for updating an employee
         /// </summary>
         /// <param name="employeeId"></param>
         /// <param name="employeeToUpdate"></param>
@@ -90,19 +84,18 @@ namespace StaffServiceAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
+        public async Task<IActionResult> UpdateEmployeeAsync(int employeeId, int managerId, EmployeeForUpdateDto employeeToUpdate)
         {
-            var result = await service.UpdateEmployeeAsync(employeeId, employeeToUpdate);
+            var res = await _service.UpdateEmployeeAsync(employeeId, managerId, employeeToUpdate);
 
-            if (result == null) return NotFound($"Employee with Id {employeeId} not found.");
+            if (res == null) return NotFound($"Employee with Id {employeeId} not found or could not be accessed.");
 
             return NoContent();
         }
 
 
-
         /// <summary>
-        ///  Action for partially updating employee
+        ///  Action for partially updating an employee
         /// </summary>
         /// <param name="employeeId"></param>
         /// <param name="patchDocument"></param>
@@ -112,17 +105,17 @@ namespace StaffServiceAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PartiallyUpdateEmployeeAsync(int employeeId, [FromBody] JsonPatchDocument patchDocument)
-        { 
-            var employeeToUpdate = await service.GetEmployeeForUpdate(employeeId);
+        public async Task<IActionResult> PartiallyUpdateEmployeeAsync(int employeeId, int managerId, [FromBody] JsonPatchDocument patchDocument)
+        {
+            var employeeToUpdate = await _service.GetEmployeeForUpdateAsync(managerId, employeeId);
 
-            if (employeeToUpdate == null) return NotFound($"Employee with Id {employeeId} not found.");
+            if (employeeToUpdate == null) return NotFound($"Employee with Id {employeeId} not found or could not be accessed.");
 
             patchDocument.ApplyTo(employeeToUpdate);
 
             if (!ModelState.IsValid)
             {
-                    return BadRequest();
+                return BadRequest();
             }
 
             if (!TryValidateModel(employeeToUpdate))
@@ -130,9 +123,9 @@ namespace StaffServiceAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await service.UpdateEmployeeAsync(employeeId,employeeToUpdate);
+            var res = await _service.UpdateEmployeeAsync(employeeId, managerId, employeeToUpdate);
 
-            if (result == null) return BadRequest();
+            if (res == null) return BadRequest();
 
             return NoContent();
 

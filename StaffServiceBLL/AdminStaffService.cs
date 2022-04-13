@@ -6,12 +6,12 @@ using StaffServiceCore.Models;
 
 namespace StaffServiceBLL
 {
-    public class EmployeeService : IEmployeeService
+    public class AdminStaffService : IAdminStaffService
     {
-        private readonly IEmployeeRepository repository;
+        private readonly IAdminStaffRepository repository;
         private readonly IMapper mapper;
 
-        public EmployeeService(IEmployeeRepository repository, IMapper mapper)
+        public AdminStaffService(IAdminStaffRepository repository, IMapper mapper)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
