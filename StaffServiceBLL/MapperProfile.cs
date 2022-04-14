@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using StaffServiceCore.Models;
+using StaffServiceBLL.Models;
 using StaffServiceDAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace StaffServiceBLL
         public MapperProfile()
         {
 
-            CreateMap<EmployeeDto, Employee>().ReverseMap();
-            CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
-            CreateMap<EmployeeForInsertionDto, Employee>().ReverseMap();
+            CreateMap<EmployeeModel, Employee>().ReverseMap();
+            CreateMap<EmployeeForUpdateModel, Employee>().ReverseMap();
+            CreateMap<EmployeeForInsertionModel, Employee>().ReverseMap();
         }
     }
 }

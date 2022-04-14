@@ -2,7 +2,7 @@
 
 namespace StaffServiceDAL.Services
 {
-    public interface IAdminStaffRepository
+    public interface IEmployeeRepository
     {
         Task<Employee?> GetEmployeeByIdAsync(int employeeId);
         Task<IEnumerable<Employee>> GetAllEmployeesAsync();

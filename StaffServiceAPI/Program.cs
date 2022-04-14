@@ -13,15 +13,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IAdminStaffRepository, AdminStaffRepository>();
-builder.Services.AddScoped<IAdminStaffService, AdminStaffService>();
-
-builder.Services.AddScoped<IManagerStaffService, ManagerStaffService>();
-builder.Services.AddScoped<IManagerStaffRepository, ManagerStaffRepository>();
-
-builder.Services.AddScoped<IEmployeeStaffRepository, EmployeeStaffRepository>();
-builder.Services.AddScoped<IEmployeeStaffService, EmployeeStaffService>();
-
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

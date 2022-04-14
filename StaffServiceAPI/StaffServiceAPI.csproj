@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StaffServiceBLL\StaffServiceBLL.csproj" />
-    <ProjectReference Include="..\StaffServiceCore\StaffServiceCore.csproj" />
   </ItemGroup>
 
 </Project>

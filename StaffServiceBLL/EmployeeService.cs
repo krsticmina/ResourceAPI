@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.JsonPatch;
 using StaffServiceDAL.Entities;
 using StaffServiceDAL.Services;
-using StaffServiceCore.Models;
+using StaffServiceBLL.Models;
 
 namespace StaffServiceBLL
 {
-    public class AdminStaffService : IAdminStaffService
+    public class EmployeeService : IEmployeeService
     {
-        private readonly IAdminStaffRepository repository;
+        private readonly IEmployeeRepository repository;
         private readonly IMapper mapper;
 
-        public AdminStaffService(IAdminStaffRepository repository, IMapper mapper)
+        public EmployeeService(IEmployeeRepository repository, IMapper mapper)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -24,7 +24,7 @@ namespace StaffServiceBLL
         /// </summary>
         /// <param name="employeeToAdd"></param>
         /// <returns></returns>
-        public async Task<EmployeeDto?> AddEmployeeAsync(EmployeeForInsertionDto employeeToAdd)
+        public async Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd)
         {
             
             if (employeeToAdd.ManagerId != 0 && employeeToAdd.ManagerId!=null)
@@ -43,7 +43,7 @@ namespace StaffServiceBLL
 
             await repository.SaveChangesAsync();
 
-            var employeeToReturn = mapper.Map<EmployeeDto>(employee);
+            var employeeToReturn = mapper.Map<EmployeeModel>(employee);
 
             return employeeToReturn;
         }
@@ -53,12 +53,12 @@ namespace StaffServiceBLL
         /// Method for getting all employees.
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
+        public async Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync()
         {
 
             var employees = await repository.GetAllEmployeesAsync();
             
-            return mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            return mapper.Map<IEnumerable<EmployeeModel>>(employees);
         }
 
 
@@ -68,7 +68,7 @@ namespace StaffServiceBLL
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
-        public async Task<EmployeeDto?> GetEmployeeByIdAsync(int employeeId)
+        public async Task<EmployeeModel?> GetEmployeeByIdAsync(int employeeId)
         {
 
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
@@ -78,7 +78,7 @@ namespace StaffServiceBLL
                 return null;
             }
 
-            return mapper.Map<EmployeeDto>(employee);
+            return mapper.Map<EmployeeModel>(employee);
         }
 
 
@@ -88,7 +88,7 @@ namespace StaffServiceBLL
         /// <param name="employeeId"></param>
         /// <param name="employeeToUpdate"></param>
         /// <returns></returns>
-        public async Task<EmployeeDto?> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
+        public async Task<EmployeeModel?> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate)
         {
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
 
@@ -108,28 +108,11 @@ namespace StaffServiceBLL
 
             await repository.SaveChangesAsync();
 
-            return mapper.Map<EmployeeDto>(employee);
+            return mapper.Map<EmployeeModel>(employee);
 
         }
 
 
-        /// <summary>
-        /// Method for getting an employee for partial update.
-        /// </summary>
-        /// <param name="employeeId"></param>
-        /// <returns></returns>
-        public async Task<EmployeeForUpdateDto?> GetEmployeeForUpdate(int employeeId)
-        {
-            var employee = await repository.GetEmployeeByIdAsync(employeeId);
-
-            if (employee == null)
-            {
-                return null;
-            }
-            return mapper.Map<EmployeeForUpdateDto>(employee);
-        }
-
-       
     }
 
 

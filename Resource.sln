@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceDAL", "StaffSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceBLL", "StaffServiceBLL\StaffServiceBLL.csproj", "{08DD3889-824A-45B9-B70A-D1B8207937B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceCore", "StaffServiceCore\StaffServiceCore.csproj", "{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{08DD3889-824A-45B9-B70A-D1B8207937B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08DD3889-824A-45B9-B70A-D1B8207937B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08DD3889-824A-45B9-B70A-D1B8207937B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B5653F8-5E2B-498F-92C2-3415A6F48EE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
