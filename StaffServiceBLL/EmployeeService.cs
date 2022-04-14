@@ -102,8 +102,6 @@ namespace StaffServiceBLL
                 employeeToUpdate.ManagerId = employee.ManagerId;
             }
 
-            employeeToUpdate.ModifiedAt = DateTime.UtcNow;
-
             mapper.Map(employeeToUpdate, employee);
 
             await repository.SaveChangesAsync();

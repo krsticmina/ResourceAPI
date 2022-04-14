@@ -17,6 +17,6 @@ namespace StaffServiceAPI.Models
         [Required(ErrorMessage = "You should provide a position.")]
         [EnumDataType(typeof(Position), ErrorMessage = "Must be Admin, Manager or Employee")]
         public string Position { get; set; } = string.Empty;
-        public DateTime ModifiedAt { get; set; } 
+
     }
 }

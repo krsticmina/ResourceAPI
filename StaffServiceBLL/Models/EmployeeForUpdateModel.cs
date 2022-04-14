@@ -14,6 +14,6 @@ namespace StaffServiceBLL.Models
         [Required]
         [EnumDataType(typeof(Position))]
         public string Position { get; set; } = string.Empty;
-        public DateTime ModifiedAt { get; set; } 
+        public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
     }
 }
