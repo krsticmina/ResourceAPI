@@ -12,7 +12,7 @@ namespace StaffServiceAPI.Models
         [Required]
         [MaxLength(100)]
         public string Email { get; set; } = string.Empty;
-        public int managerId { get; set; }
+        public int? managerId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
 
