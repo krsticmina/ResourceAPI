@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StaffServiceAPI.DbContexts;
 using StaffServiceDAL.Services;
 using StaffServiceBLL;
-
+using StaffServiceAPI.CustomExceptionMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,12 +27,15 @@ builder.Services.AddControllersWithViews(options => { options.SuppressAsyncSuffi
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionMiddleware();
 
 app.UseHttpsRedirection();
 

@@ -36,10 +36,12 @@ public class EmployeeController : ControllerBase
     {
         var employee = await service.GetEmployeeByIdAsync(employeeId);
 
-        if (employee == null)
+        if (employee == null) 
         {
-            return NotFound($"Employee with Id {employeeId} not found.");
+            return NotFound($"Employee with Id {employeeId} not found");
+    
         }
+
         return Ok(mapper.Map<EmployeeDto>(employee));
     }
 
@@ -67,18 +69,13 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
+    public async Task<ActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
     {
         var employeeToAdd = mapper.Map<EmployeeForInsertionModel>(employee);
 
         var result = await service.AddEmployeeAsync(employeeToAdd);
 
-        if (result == null)
-        {
-            return BadRequest($"Manager with Id {employee.ManagerId} doesn't exist or does not have managerial position.");
-        }
-
-        return CreatedAtAction(nameof(GetEmployeeByIdAsync), new { employeeId = result.Id }, result);
+        return CreatedAtAction(nameof(AddEmployeeAsync),result);
 
     }
 
@@ -94,15 +91,13 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
+    public async Task<ActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
     {
         var employee = mapper.Map<EmployeeForUpdateModel>(employeeToUpdate);
 
-        var result = await service.UpdateEmployeeAsync(employeeId, employee);
+        await service.UpdateEmployeeAsync(employeeId, employee);
 
-        if (result == null) return NotFound($"Employee with Id {employeeId} not found.");
-
-        return NoContent();
+        return Ok();
     }
 
 
@@ -120,25 +115,21 @@ public class EmployeeController : ControllerBase
     { 
         var employee = await service.GetEmployeeByIdAsync(employeeId);
 
-        var employeeToUpdate = mapper.Map<EmployeeForUpdateDto>(employee);
+        if (employee == null) 
+        {
+            return NotFound($"Employee with Id {employeeId} could not be found.");
+        }
 
-        if (employeeToUpdate == null) return NotFound($"Employee with Id {employeeId} not found.");
+        var employeeToUpdate = mapper.Map<EmployeeForUpdateDto>(employee);
 
         patchDocument.ApplyTo(employeeToUpdate);
 
-        if (!ModelState.IsValid)
-        {
-                return BadRequest();
-        }
-
         if (!TryValidateModel(employeeToUpdate))
         {
-            return BadRequest();
+            return BadRequest("Invalid input for partially updating employee");
         }
 
-        var result = await service.UpdateEmployeeAsync(employeeId, mapper.Map<EmployeeForUpdateModel>(employeeToUpdate));
-
-        if (result == null) return BadRequest();
+        await service.UpdateEmployeeAsync(employeeId, mapper.Map<EmployeeForUpdateModel>(employeeToUpdate));
 
         return NoContent();
 

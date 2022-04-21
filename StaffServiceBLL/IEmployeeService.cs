@@ -13,7 +13,7 @@ namespace StaffServiceBLL
         Task<EmployeeModel?> GetEmployeeByIdAsync(int employeeId);
         Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync();
         Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd);
-        Task<EmployeeModel?> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate);
+        Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate);
     
     }
 }

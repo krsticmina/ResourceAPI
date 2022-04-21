@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using StaffServiceDAL.Entities;
 using StaffServiceDAL.Services;
 using StaffServiceBLL.Models;
+using StaffServiceBLL.Exceptions;
 
 namespace StaffServiceBLL
 {
@@ -31,9 +32,13 @@ namespace StaffServiceBLL
             {
                 var manager = await repository.GetEmployeeByIdAsync((int)employeeToAdd.ManagerId);
 
-                if (manager == null || manager.Position != "Manager")
+                if (manager == null)
                 {
-                    return null;
+                    throw new EmployeeNotFoundException($"Manager with Id {employeeToAdd.ManagerId} could not be found");
+                }
+                if( manager.Position != "Manager")
+                {
+                    throw new NotManagerException("Requested manager does not have managerial position!");
                 }
             }
 
@@ -88,13 +93,13 @@ namespace StaffServiceBLL
         /// <param name="employeeId"></param>
         /// <param name="employeeToUpdate"></param>
         /// <returns></returns>
-        public async Task<EmployeeModel?> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate)
+        public async Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate)
         {
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
 
             if (employee == null) 
             {
-                return null; 
+                throw new EmployeeNotFoundException($"Employee with Id {employeeId} could not be found");
             }
 
             if (employeeToUpdate.ManagerId == null)
@@ -105,8 +110,6 @@ namespace StaffServiceBLL
             mapper.Map(employeeToUpdate, employee);
 
             await repository.SaveChangesAsync();
-
-            return mapper.Map<EmployeeModel>(employee);
 
         }
 
