@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using static StaffServiceAPI.Dtos.Enumerations;
 
 namespace StaffServiceAPI.Models
 {
@@ -11,7 +7,6 @@ namespace StaffServiceAPI.Models
     {
         [Required(ErrorMessage = "You should provide a name value.")]
         public string Name { get; set; } = string.Empty;
-
         [MaxLength(100)]
         [Required(ErrorMessage = "You should provide an email value.")]
         [RegularExpression(@"(.*)@(.*)\.(.*)", ErrorMessage = "Input email not valid.")]

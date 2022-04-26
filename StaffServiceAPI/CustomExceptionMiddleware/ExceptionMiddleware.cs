@@ -18,32 +18,27 @@ namespace StaffServiceAPI.CustomExceptionMiddleware
             {
                 await next(httpContext);
             }
+            catch(ArgumentOutOfRangeException ex) 
+            {
+                await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
+            }
             catch (EmployeeNotFoundException ex)
             {
-                await HandleExceptionAsync(httpContext, ex);
-
+                await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
             }
             catch (NotManagerException ex) 
             {
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, HttpStatusCode.InternalServerError, ex);
             }
         }
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private async Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, Exception exception)
         {
             context.Response.ContentType = "application/json";
-
-            var statusCode = exception switch
-            {
-                EmployeeNotFoundException => (int)HttpStatusCode.NotFound,
-                NotManagerException => (int)HttpStatusCode.BadRequest,
-                _ => (int)HttpStatusCode.InternalServerError
-            };
-
-            context.Response.StatusCode = statusCode;
+            context.Response.StatusCode = (int)statusCode;
 
             await context.Response.WriteAsync(new ErrorDetails() 
             { 

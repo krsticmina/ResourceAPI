@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StaffServiceDAL.Entities
 {
     public class Employee
-
     {
         [Key]
         [Required]
@@ -22,7 +16,7 @@ namespace StaffServiceDAL.Entities
         public string Email { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedAt { get; set; }
-        public string Position { get; set; } = string.Empty;
+        public string Position { get; set; } = String.Empty;
         [ForeignKey("ManagerId")]
         public int? ManagerId { get; set; }
         public Employee Manager { get; set; }

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static StaffServiceBLL.Models.Enumerations;
 
 namespace StaffServiceBLL.Models
 {
-    public enum Position { Admin = 1, Manager = 2, Employee = 3}
     public class EmployeeForUpdateModel
     {
         [Required]

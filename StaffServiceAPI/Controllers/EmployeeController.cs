@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using StaffServiceAPI.Models;
 using StaffServiceBLL;
@@ -30,17 +27,10 @@ public class EmployeeController : ControllerBase
     /// <param name="employeeId"></param>
     /// <returns></returns>
     [HttpGet("{employeeId}")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetEmployeeByIdAsync(int employeeId)
     {
         var employee = await service.GetEmployeeByIdAsync(employeeId);
-
-        if (employee == null) 
-        {
-            return NotFound($"Employee with Id {employeeId} not found");
-    
-        }
 
         return Ok(mapper.Map<EmployeeDto>(employee));
     }
@@ -67,7 +57,6 @@ public class EmployeeController : ControllerBase
     /// <returns></returns>
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
     {
@@ -88,9 +77,7 @@ public class EmployeeController : ControllerBase
     /// <returns></returns>
 
     [HttpPut("{employeeId}")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
     {
         var employee = mapper.Map<EmployeeForUpdateModel>(employeeToUpdate);
@@ -109,16 +96,10 @@ public class EmployeeController : ControllerBase
     /// <returns></returns>
     [HttpPatch("{employeeId}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> PartiallyUpdateEmployeeAsync(int employeeId, [FromBody] JsonPatchDocument patchDocument)
     { 
         var employee = await service.GetEmployeeByIdAsync(employeeId);
-
-        if (employee == null) 
-        {
-            return NotFound($"Employee with Id {employeeId} could not be found.");
-        }
 
         var employeeToUpdate = mapper.Map<EmployeeForUpdateDto>(employee);
 

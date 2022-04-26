@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static StaffServiceAPI.Dtos.Enumerations;
 
 namespace StaffServiceAPI.Models
 {
-    public enum Position { Admin = 1, Manager = 2, Employee = 3}
+
     public class EmployeeForUpdateDto
     {
         [Required(ErrorMessage = "You should provide a name value.")]

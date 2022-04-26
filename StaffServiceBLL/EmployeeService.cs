@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
+using StaffServiceBLL.Exceptions;
+using StaffServiceBLL.Models;
 using StaffServiceDAL.Entities;
 using StaffServiceDAL.Services;
-using StaffServiceBLL.Models;
-using StaffServiceBLL.Exceptions;
+using static StaffServiceBLL.Models.Enumerations;
 
 namespace StaffServiceBLL
 {
@@ -19,27 +19,30 @@ namespace StaffServiceBLL
 
         }
 
-       
-        /// <summary>
-        /// Method for adding an employee.
-        /// </summary>
-        /// <param name="employeeToAdd"></param>
-        /// <returns></returns>
+        private async Task CheckManager(int managerId) 
+        {
+            var manager = await repository.GetEmployeeByIdAsync(managerId);
+
+            if (manager == null)
+            {
+                throw new EmployeeNotFoundException($"Manager with Id {managerId} could not be found");
+            }
+            if (manager.Position!= Position.Manager.ToString())
+            {
+                throw new NotManagerException("Requested manager does not have managerial position!");
+            }
+        }
+
+        ///<inheritdoc/>
         public async Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd)
         {
-            
-            if (employeeToAdd.ManagerId != 0 && employeeToAdd.ManagerId!=null)
+            if ( employeeToAdd.ManagerId!=null)
             {
-                var manager = await repository.GetEmployeeByIdAsync((int)employeeToAdd.ManagerId);
-
-                if (manager == null)
+                if (employeeToAdd.ManagerId == 0)
                 {
-                    throw new EmployeeNotFoundException($"Manager with Id {employeeToAdd.ManagerId} could not be found");
+                    throw new ArgumentOutOfRangeException("There is not an employee with Id 0.");
                 }
-                if( manager.Position != "Manager")
-                {
-                    throw new NotManagerException("Requested manager does not have managerial position!");
-                }
+                await CheckManager((int)employeeToAdd.ManagerId);
             }
 
             var employee = mapper.Map<Employee>(employeeToAdd);
@@ -53,11 +56,7 @@ namespace StaffServiceBLL
             return employeeToReturn;
         }
 
-
-        /// <summary>
-        /// Method for getting all employees.
-        /// </summary>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync()
         {
 
@@ -66,13 +65,7 @@ namespace StaffServiceBLL
             return mapper.Map<IEnumerable<EmployeeModel>>(employees);
         }
 
-
-        
-        /// <summary>
-        /// Method for getting an employee by Id.
-        /// </summary>
-        /// <param name="employeeId"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<EmployeeModel?> GetEmployeeByIdAsync(int employeeId)
         {
 
@@ -80,19 +73,13 @@ namespace StaffServiceBLL
 
             if (employee == null)
             {
-                return null;
+                throw new EmployeeNotFoundException($"Employee with Id {employeeId} could not be found.");
             }
 
             return mapper.Map<EmployeeModel>(employee);
         }
 
-
-        /// <summary>
-        /// Method for updating an employee.
-        /// </summary>
-        /// <param name="employeeId"></param>
-        /// <param name="employeeToUpdate"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate)
         {
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
@@ -101,8 +88,15 @@ namespace StaffServiceBLL
             {
                 throw new EmployeeNotFoundException($"Employee with Id {employeeId} could not be found");
             }
-
-            if (employeeToUpdate.ManagerId == null)
+            if (employeeToUpdate.ManagerId != null) 
+            {
+                if (employee.ManagerId == 0)
+                {
+                    throw new ArgumentOutOfRangeException("Employee Id cannot be 0.");
+                }
+                await CheckManager((int)employeeToUpdate.ManagerId);
+            }
+            else
             {
                 employeeToUpdate.ManagerId = employee.ManagerId;
             }

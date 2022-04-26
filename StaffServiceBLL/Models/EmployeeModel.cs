@@ -12,5 +12,6 @@ namespace StaffServiceBLL.Models
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
 
+        public static EmployeeModel NullEmployee = new() { }; 
     }
 }
