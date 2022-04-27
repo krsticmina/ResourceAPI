@@ -26,7 +26,6 @@ namespace StaffServiceBLL
         /// <param name="employeeToAdd"></param>
         /// <exception cref="Exceptions.EmployeeNotFoundException">Thrown when an employee could not be found in the database.</exception>
         /// <exception cref="Exceptions.NotManagerException">Thrown when the requested manager does not have managerial position.</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the employee Id is out of specified range"</exception>
         /// <returns></returns>
         Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd);
 
@@ -37,7 +36,6 @@ namespace StaffServiceBLL
         /// <param name="employeeToUpdate"></param>
         /// <exception cref="Exceptions.EmployeeNotFoundException">Thrown when an employee could not be found in the database.</exception>
         /// <exception cref="Exceptions.NotManagerException">Thrown when the requested manager does not have managerial position.</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the employee Id is out of specified range"</exception>
         /// <returns></returns>
         Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate);
     

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using StaffServiceBLL.Exceptions;
 using StaffServiceBLL.Models;
+using StaffServiceCommon;
 using StaffServiceDAL.Entities;
 using StaffServiceDAL.Services;
-using static StaffServiceCommon.Enumerations;
 
 namespace StaffServiceBLL
 {
@@ -38,10 +38,6 @@ namespace StaffServiceBLL
         {
             if ( employeeToAdd.ManagerId!=null)
             {
-                if (employeeToAdd.ManagerId == 0)
-                {
-                    throw new ArgumentOutOfRangeException("There is not an employee with Id 0.");
-                }
                 await CheckManager((int)employeeToAdd.ManagerId);
             }
 
@@ -90,10 +86,6 @@ namespace StaffServiceBLL
             }
             if (employeeToUpdate.ManagerId != null) 
             {
-                if (employee.ManagerId == 0)
-                {
-                    throw new ArgumentOutOfRangeException("Employee Id cannot be 0.");
-                }
                 await CheckManager((int)employeeToUpdate.ManagerId);
             }
             else

@@ -18,10 +18,6 @@ namespace StaffServiceAPI.CustomExceptionMiddleware
             {
                 await next(httpContext);
             }
-            catch(ArgumentOutOfRangeException ex) 
-            {
-                await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
-            }
             catch (EmployeeNotFoundException ex)
             {
                 await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
