@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static StaffServiceAPI.Dtos.Enumerations;
+using static StaffServiceCommon.Enumerations;
 
 namespace StaffServiceAPI.Models
 {

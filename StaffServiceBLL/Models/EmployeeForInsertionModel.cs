@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static StaffServiceBLL.Models.Enumerations;
+using static StaffServiceCommon.Enumerations;
 
 namespace StaffServiceBLL.Models
 {

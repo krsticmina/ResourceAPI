@@ -28,6 +28,8 @@ public class EmployeeController : ControllerBase
     /// <returns></returns>
     [HttpGet("{employeeId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetEmployeeByIdAsync(int employeeId)
     {
         var employee = await service.GetEmployeeByIdAsync(employeeId);
@@ -42,6 +44,7 @@ public class EmployeeController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync()
     {
         var employees = await service.GetAllEmployeesAsync();
@@ -58,6 +61,9 @@ public class EmployeeController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> AddEmployeeAsync([FromBody] EmployeeForInsertionDto employee)
     {
         var employeeToAdd = mapper.Map<EmployeeForInsertionModel>(employee);
@@ -78,6 +84,9 @@ public class EmployeeController : ControllerBase
 
     [HttpPut("{employeeId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> UpdateEmployeeAsync(int employeeId, EmployeeForUpdateDto employeeToUpdate)
     {
         var employee = mapper.Map<EmployeeForUpdateModel>(employeeToUpdate);
@@ -95,7 +104,9 @@ public class EmployeeController : ControllerBase
     /// <param name="patchDocument"></param>
     /// <returns></returns>
     [HttpPatch("{employeeId}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> PartiallyUpdateEmployeeAsync(int employeeId, [FromBody] JsonPatchDocument patchDocument)
     { 

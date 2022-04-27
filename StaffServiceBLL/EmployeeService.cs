@@ -3,7 +3,7 @@ using StaffServiceBLL.Exceptions;
 using StaffServiceBLL.Models;
 using StaffServiceDAL.Entities;
 using StaffServiceDAL.Services;
-using static StaffServiceBLL.Models.Enumerations;
+using static StaffServiceCommon.Enumerations;
 
 namespace StaffServiceBLL
 {

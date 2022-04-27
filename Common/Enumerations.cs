@@ -1,4 +1,4 @@
-﻿namespace StaffServiceBLL.Models
+﻿namespace StaffServiceCommon
 {
     public class Enumerations
     {
