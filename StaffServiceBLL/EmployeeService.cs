@@ -19,13 +19,17 @@ namespace StaffServiceBLL
 
         }
 
-        private async Task CheckManager(int managerId) 
+        private async Task CheckManager(int managerId, int currentEmployeeId, bool isAdmin) 
         {
             var manager = await repository.GetEmployeeByIdAsync(managerId);
 
             if (manager == null)
             {
                 throw new EmployeeNotFoundException($"Manager with Id {managerId} could not be found");
+            }
+            if (!isAdmin && managerId!=currentEmployeeId) 
+            {
+                await CheckIfManagerIsAuthorizedAsync(managerId, currentEmployeeId);
             }
             if (manager.Position!= Position.Manager.ToString())
             {
@@ -34,11 +38,15 @@ namespace StaffServiceBLL
         }
 
         ///<inheritdoc/>
-        public async Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd)
+        public async Task<EmployeeModel?> AddEmployeeAsync(EmployeeForInsertionModel employeeToAdd, int currentEmployeeId, bool isAdmin)
         {
-            if ( employeeToAdd.ManagerId!=null)
+            if (!isAdmin && employeeToAdd.ManagerId==null)
             {
-                await CheckManager((int)employeeToAdd.ManagerId);
+                throw new UnauthorizedException("Managers can only add employees for themselves or for their subordinates.");
+            }
+            if (employeeToAdd.ManagerId!=null)
+            {
+                await CheckManager((int)employeeToAdd.ManagerId, currentEmployeeId, isAdmin);
             }
 
             var employee = mapper.Map<Employee>(employeeToAdd);
@@ -53,8 +61,14 @@ namespace StaffServiceBLL
         }
 
         ///<inheritdoc/>
-        public async Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync()
+        public async Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync(int currentEmployeeId, bool isAdmin)
         {
+            if (!isAdmin) 
+            { 
+                var employeesForManager = await repository.GetAllEmployeesForManagerAsync(currentEmployeeId);
+
+                return mapper.Map<IEnumerable<EmployeeModel>>(employeesForManager);
+            }
 
             var employees = await repository.GetAllEmployeesAsync();
             
@@ -62,7 +76,7 @@ namespace StaffServiceBLL
         }
 
         ///<inheritdoc/>
-        public async Task<EmployeeModel?> GetEmployeeByIdAsync(int employeeId)
+        public async Task<EmployeeModel?> GetEmployeeByIdAsync(int employeeId, int currentEmployeeId, bool isAdmin, bool isEmployee)
         {
 
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
@@ -71,22 +85,39 @@ namespace StaffServiceBLL
             {
                 throw new EmployeeNotFoundException($"Employee with Id {employeeId} could not be found.");
             }
-
+            if (!isAdmin && employeeId != currentEmployeeId)
+            {
+                if (!isEmployee)
+                {
+                    await CheckIfManagerIsAuthorizedAsync(employeeId, currentEmployeeId);
+                }
+                else
+                {
+                    throw new UnauthorizedException($"You don't have access to employee with Id {employeeId}");
+                }
+            }
             return mapper.Map<EmployeeModel>(employee);
         }
 
         ///<inheritdoc/>
-        public async Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate)
+        public async Task UpdateEmployeeAsync(int employeeId, EmployeeForUpdateModel employeeToUpdate, int currentEmployeeId, bool isAdmin)
         {
+
             var employee = await repository.GetEmployeeByIdAsync(employeeId);
 
             if (employee == null) 
             {
                 throw new EmployeeNotFoundException($"Employee with Id {employeeId} could not be found");
             }
-            if (employeeToUpdate.ManagerId != null) 
+
+            if (!isAdmin)
             {
-                await CheckManager((int)employeeToUpdate.ManagerId);
+                await CheckIfManagerIsAuthorizedAsync(employee.Id, currentEmployeeId);
+
+            }
+            if (employeeToUpdate.ManagerId != null)
+            {
+                await CheckManager((int)employeeToUpdate.ManagerId, currentEmployeeId, isAdmin);
             }
             else
             {
@@ -99,7 +130,28 @@ namespace StaffServiceBLL
 
         }
 
+        private async Task CheckIfManagerIsAuthorizedAsync(int employeeId, int managerId) 
+        {
+            var employee = await repository.CheckIfManagerIsAuthorizedAsync(employeeId, managerId);
 
+            if (employee == null)
+            {
+                throw new UnauthorizedException($"You don't have access to employee with Id {employeeId}.");
+            }
+        }
+
+        ///<inheritdoc/>
+        public async Task<EmployeeModel> FindUserInDatabaseAsync(int userId) 
+        {
+            var employee = await repository.FindUserInDatabaseAsync(userId);
+
+            if (employee == null)
+            {
+                throw new EmployeeNotFoundException($"Employee with User Id {userId} could not be found.");
+            }
+
+            return mapper.Map<EmployeeModel>(employee);
+        }
     }
 
 

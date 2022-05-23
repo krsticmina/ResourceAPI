@@ -18,11 +18,15 @@ namespace StaffServiceAPI.CustomExceptionMiddleware
             {
                 await next(httpContext);
             }
+            catch (UnauthorizedException ex) 
+            {
+                await HandleExceptionAsync(httpContext, HttpStatusCode.Unauthorized, ex);
+            }
             catch (EmployeeNotFoundException ex)
             {
                 await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
             }
-            catch (NotManagerException ex) 
+            catch (NotManagerException ex)
             {
                 await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
             }

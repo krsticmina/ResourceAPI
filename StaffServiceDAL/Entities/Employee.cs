@@ -20,6 +20,7 @@ namespace StaffServiceDAL.Entities
         [ForeignKey("ManagerId")]
         public int? ManagerId { get; set; }
         public Employee Manager { get; set; }
+        public int? UserId { get; set; }
         public Employee(string name)
         {
             Name = name;

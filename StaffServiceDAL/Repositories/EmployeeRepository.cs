@@ -13,13 +13,7 @@ namespace StaffServiceDAL.Services
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        
-
-        /// <summary>
-        ///  Asynchronous method for retrieving an employee using Id.
-        /// </summary>
-        /// <param name="employeeId"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<Employee?> GetEmployeeByIdAsync(int employeeId)
         {
 
@@ -27,33 +21,47 @@ namespace StaffServiceDAL.Services
 
         }
 
-        /// <summary>
-        /// Asynchronous method for retrieving all employees from database
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
             return await context.Employees.ToListAsync();
-            
+
         }
 
-        /// <summary>
-        /// Asynchronous method for adding an employee to database
-        /// </summary>
-        /// <param name="employee"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task AddEmployeeAsync(Employee employee)
         {
             await context.Employees.AddAsync(employee);
         }
 
 
-        /// <summary>
-        /// Asynchronous method for saving changes made to database
-        /// </summary>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<bool> SaveChangesAsync()
         {
             return await context.SaveChangesAsync() >= 0;
         }
+
+        ///<inheritdoc/>
+        public async Task<IEnumerable<Employee>> GetAllEmployeesForManagerAsync(int managerId)
+        {
+            return await context.Employees.FromSqlInterpolated($"WITH EmployeeCTE AS(SELECT * FROM [Employees] WHERE ManagerId = {managerId} UNION ALL SELECT emp.* FROM [Employees] AS emp INNER JOIN EmployeeCTE AS mgr ON emp.ManagerId = mgr.Id WHERE emp.ManagerId IS NOT NULL) SELECT * FROM EmployeeCTE").ToListAsync();
+        }
+
+        ///<inheritdoc/>
+        public async Task<Employee?> CheckIfManagerIsAuthorizedAsync(int employeeId, int managerId)
+        {
+            var employees = await context.Employees.FromSqlInterpolated($"WITH EmployeeCTE AS(SELECT * FROM [Employees] WHERE ManagerId = {managerId} UNION ALL SELECT emp.* FROM [Employees] AS emp INNER JOIN EmployeeCTE AS mgr ON emp.ManagerId = mgr.Id WHERE emp.ManagerId IS NOT NULL) SELECT * FROM EmployeeCTE").ToListAsync();
+            
+            return employees.Where(e => e.Id == employeeId).FirstOrDefault();
+
+        }
+
+        ///<inheritdoc/>
+        public Task<Employee?> FindUserInDatabaseAsync(int userId)
+        {
+            return context.Employees.Where(e => e.UserId == userId).FirstOrDefaultAsync();
+        }
+
     }
 }
+
