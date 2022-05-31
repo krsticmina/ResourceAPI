@@ -24,15 +24,6 @@ public class EmployeeController : ApiControllerBase
     }
 
 
-    internal async Task<int> FindUserInDatabaseAsync(int userId) 
-    {
-        var employee = await service.FindUserInDatabaseAsync(userId);
-
-        //return mapper.Map<EmployeeDto>(employee);
-
-        return employee.Id;
-    }
-
     /// <summary>
     /// Action for finding an employee using Id.
     /// </summary>
@@ -55,7 +46,7 @@ public class EmployeeController : ApiControllerBase
     /// Action for retrieving all employees from the database.
     /// </summary>
     /// <returns></returns>
-    [Authorize(Roles ="Manager, Admin")]
+    [Authorize(Roles = "Manager, Admin")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
