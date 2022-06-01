@@ -10,7 +10,7 @@ using StaffServiceCommon;
 namespace StaffServiceAPI.Controllers;
 
 [Route("api/employees")]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Jwt")]
 [CheckUserAsync]
 public class EmployeeController : ApiControllerBase
 {

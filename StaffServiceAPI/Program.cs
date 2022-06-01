@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using StaffServiceAPI.DbContexts;
-using StaffServiceDAL.Services;
-using StaffServiceBLL;
 using StaffServiceAPI.CustomExceptionMiddleware;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using StaffServiceAPI;
+using StaffServiceAPI.CustomJwtAuthentication;
+using StaffServiceAPI.DbContexts;
+using StaffServiceBLL;
+using StaffServiceDAL.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,28 +17,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddHttpClient();
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtAuthentication:Issuer"],
-            ValidAudience = builder.Configuration["JwtAuthentication:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.ASCII.GetBytes(builder.Configuration["JwtAuthentication:SecretForKey"]))
-        };
-    }
-);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<StaffDatabaseContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("StaffDatabaseConnectionString"));
 });
 
+
+builder.Services.AddAuthentication(
+    options => options.DefaultScheme = "Jwt")
+    .AddScheme<JwtAuthSchemeOptions, CustomJwtAuthHandler>(
+        "Jwt", options => { });
 
 // This is for calling CreatedAtAction in my controller because it trims the 'Async' part from action names
 builder.Services.AddControllersWithViews(options => { options.SuppressAsyncSuffixInActionNames = false; });
