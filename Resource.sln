@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceDAL", "StaffSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceBLL", "StaffServiceBLL\StaffServiceBLL.csproj", "{08DD3889-824A-45B9-B70A-D1B8207937B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffServiceCommon", "Common\StaffServiceCommon.csproj", "{1684E9A1-FEBF-47C6-B226-E24CC2B7E077}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffServiceCommon", "Common\StaffServiceCommon.csproj", "{1684E9A1-FEBF-47C6-B226-E24CC2B7E077}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffServiceTests", "StaffServiceTests\StaffServiceTests.csproj", "{C14DF38D-F0BD-4C59-992B-4F9CF6006189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{1684E9A1-FEBF-47C6-B226-E24CC2B7E077}.Debug|x64.Build.0 = Debug|x64
 		{1684E9A1-FEBF-47C6-B226-E24CC2B7E077}.Release|x64.ActiveCfg = Release|x64
 		{1684E9A1-FEBF-47C6-B226-E24CC2B7E077}.Release|x64.Build.0 = Release|x64
+		{C14DF38D-F0BD-4C59-992B-4F9CF6006189}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C14DF38D-F0BD-4C59-992B-4F9CF6006189}.Debug|x64.Build.0 = Debug|Any CPU
+		{C14DF38D-F0BD-4C59-992B-4F9CF6006189}.Release|x64.ActiveCfg = Release|Any CPU
+		{C14DF38D-F0BD-4C59-992B-4F9CF6006189}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

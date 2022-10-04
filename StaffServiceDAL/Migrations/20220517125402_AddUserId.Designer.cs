@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StaffServiceAPI.DbContexts;
 
@@ -11,9 +12,10 @@ using StaffServiceAPI.DbContexts;
 namespace StaffServiceDAL.Migrations
 {
     [DbContext(typeof(StaffDatabaseContext))]
-    partial class StaffDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220517125402_AddUserId")]
+    partial class AddUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

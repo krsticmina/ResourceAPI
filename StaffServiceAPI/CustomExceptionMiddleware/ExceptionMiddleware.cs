@@ -1,5 +1,6 @@
 ﻿using StaffServiceBLL.Exceptions;
 using System.Net;
+using System.Security.Authentication;
 
 namespace StaffServiceAPI.CustomExceptionMiddleware
 {
@@ -18,11 +19,19 @@ namespace StaffServiceAPI.CustomExceptionMiddleware
             {
                 await next(httpContext);
             }
+            catch (AuthenticationException ex) 
+            {
+                await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
+            }
+            catch (UnauthorizedException ex)
+            {
+                await HandleExceptionAsync(httpContext, HttpStatusCode.Unauthorized, ex);
+            }
             catch (EmployeeNotFoundException ex)
             {
                 await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
             }
-            catch (NotManagerException ex) 
+            catch (NotManagerException ex)
             {
                 await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, ex);
             }
